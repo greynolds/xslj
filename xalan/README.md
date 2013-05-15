@@ -1,10 +1,20 @@
-# xslt
+# xalan
 
-A Clojure library designed to ... well, that part is up to you.
+A simple example of using clojure to implement xslt extension
+functions, using xalan.
+
+src/main/java contains an extension function implemented in java.
+This is just to establish that the extension functionality is working.
+
+src/xalan contains extension functions implemented in clojure.
+
+test/xalan/ext_test.clj contains code to test the extension functions
+using JAXP to process a simple xml file and xslt stylesheet.
 
 ## Usage
 
-FIXME
+  $ lein compile
+  $ lein test
 
 ## License
 

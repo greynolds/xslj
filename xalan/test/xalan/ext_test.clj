@@ -2,9 +2,6 @@
   (:require [clojure.test :refer :all]
 ;            [xslj.core :refer :all]
             [xalan.ext :refer :all])
-  ;; http://en.wikipedia.org/wiki/Java_API_for_XML_Processing#XSLT_interface
-  ;; /* file src/examples/xslt/XsltDemo.java */
-  ;; package examples.xslt;
   (:import [java.io StringReader StringWriter]
            [javax.xml.transform Transformer TransformerException
             TransformerFactory
@@ -31,27 +28,38 @@
         "xmlns:xj='xalan://xalan.ext'"
         "xmlns:fib='xalan://fib.FibonacciNumber'"
         "xmlns:xsl='http://www.w3.org/1999/XSL/Transform'"
-        "exclude-result-prefixes='xj'>"
+        "exclude-result-prefixes='xj fib'>"
         "   <xsl:output method='xml' indent='no'/>"
         "   <xsl:template match='/'>"
         "      <reRoot><reNode>"
         "<xsl:value-of select='/root/node/@val' /> world"
+        "<fib>"
         "<xsl:value-of select='fib:calculate(7)'/>"
-        "<xsl:value-of select='xj:xalbar(3)'/>"
+        "</fib>"
+        "<foo>"
+        "<xsl:value-of select='xj:xalfoo(7)'/>"
+        "</foo>"
+        "<bar>"
+        "<xsl:value-of select='xj:xalbar()'/>"
+        "</bar>"
         "</reNode></reRoot>"
         "   </xsl:template>"
         "</xsl:stylesheet>"]))
 
-(def xmlSourceResource (join "\n"
-                             ["<?xml version='1.0' encoding='UTF-8'?>"
-                             "<root><node val='hello'/></root>"]))
-
+;; use JAXP to process xml using xslt stylesheet
+;; http://en.wikipedia.org/wiki/Java_API_for_XML_Processing#XSLT_interface
 (deftest ^:init init
   (testing "xalan init"
+    ;; prove that the clojure functions are available
     (xalfoo 3)
     (xalbar)
+    (def xmlSourceResource (StringReader.
+                            (join "\n"
+                                  ["<?xml version='1.0' encoding='UTF-8'?>"
+                                   "<root><node val='hello'/></root>"])))
     (def xmlResultResource (StringWriter.))
     (def xmlTransformerFactory (TransformerFactory/newInstance))
+    ;; make sure we're picking up the correct jar
     (prn (str "Transformer factory: "
               (.getName (.getClass xmlTransformerFactory))))
     ;; (prn (str "Transformer: "
@@ -61,6 +69,6 @@
                                           (StringReader.
                                            xsltResource))))
     (.transform xmlTransformer
-                (StreamSource. (StringReader. xmlSourceResource))
+                (StreamSource. xmlSourceResource)
                 (StreamResult. xmlResultResource))
     (prn (str xmlResultResource))))

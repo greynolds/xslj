@@ -25,11 +25,11 @@
             void]
            [^{:static true}
             bar
-            [Object]
+            []
             ;; [Object, Integer]
             void]])
 
 ;;(prn (System/getProperty "javax.xml.transform.TransformerFactory"))
 
 (defn xalfoo [n] (log/info "foo" n)) ;; (do (prn("foobar")) "x"))
-(defn xalbar [this] (do (log/info "bar") "foobar"))
+(defn xalbar [] (do (log/info "bar") "foobar"))
